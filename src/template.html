@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quanto custa um funcionário — JBC Assessoria Contábil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-01: #990024; --brand-02: #CC143F; --brand-03: #FF003C;
+    --dark-3: #2B2E33; --dark-2: #565B66; --dark-1: #6B768A;
+    --mid-grey: #D6D6D6; --light-3: #EFEFEF; --light-2: #F5F5F5; --light-1: #F9F9F9; --white: #FFFFFF;
+    --positive: #008542; --warning: #E58A00; --negative: #CC2200; --info: #295FCC;
+    --font: 'Lato', Arial, sans-serif;
+    --grid-gutter: 16px; --grid-margin-sm: 16px; --grid-margin-md: 32px;
+    --radius-sm: 2px; --radius-md: 4px;
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); font-size: 14px; color: var(--dark-3); background: var(--light-2); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+
+  .header { background: var(--white); border-bottom: 2px solid var(--brand-01); height: 56px; display: flex; align-items: center; padding: 0 var(--grid-margin-md); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(153,0,36,.10); }
+  .header-logo { display: flex; align-items: center; text-decoration: none; }
+  .header-logo img { height: 36px; display: block; }
+
+  .page { max-width: 960px; margin: 0 auto; padding: 40px var(--grid-margin-md) 80px; }
+  .page-header { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--mid-grey); }
+  .page-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand-01); margin-bottom: 8px; }
+  .page-title { font-size: 26px; font-weight: 300; line-height: 1.2; margin-bottom: 8px; letter-spacing: -0.3px; }
+  .page-title strong { font-weight: 700; }
+  .page-desc { font-size: 14px; color: var(--dark-2); line-height: 1.55; max-width: 680px; }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .card { background: var(--white); border: 1px solid var(--mid-grey); border-radius: var(--radius-md); box-shadow: var(--shadow-card); }
+  .card-section { padding: 24px; border-bottom: 1px solid var(--light-3); }
+  .card-section:last-child { border-bottom: none; }
+  .step { display: flex; align-items: baseline; gap: 8px; font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+  .step b { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--brand-01); color: var(--white); font-size: 12px; flex-shrink: 0; }
+  .step span { font-size: 12px; font-weight: 400; color: var(--dark-1); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--grid-gutter); margin-bottom: 16px; }
+  .form-row.full { grid-template-columns: 1fr; }
+  .form-row:last-child { margin-bottom: 0; }
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .field label { font-size: 12px; font-weight: 700; color: var(--dark-2); letter-spacing: 0.02em; }
+  .field input, .field select {
+    font-family: var(--font); font-size: 15px; color: var(--dark-3); background: var(--light-1);
+    border: none; border-bottom: 2px solid var(--mid-grey); border-radius: 0; padding: 10px 12px; height: 44px;
+    outline: none; transition: border-color 0.15s; width: 100%; min-width: 0; appearance: none; -webkit-appearance: none;
+  }
+  .field input { font-variant-numeric: tabular-nums; }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B768A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; text-overflow: ellipsis;
+  }
+  .field input:focus, .field select:focus { border-bottom-color: var(--brand-01); background: var(--white); }
+  .field input::placeholder { color: var(--dark-1); }
+  .prefix { position: relative; }
+  .prefix::before { content: 'R$'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--dark-1); pointer-events: none; }
+  .prefix input { padding-left: 38px; }
+  .field-helper { font-size: 12px; color: var(--dark-1); line-height: 1.45; }
+  .field-helper.warn { color: #8A5300; }
+  .field-error { font-size: 12px; color: var(--negative); display: none; }
+  .field[hidden] { display: none; }
+  .field.has-error input { border-bottom-color: var(--negative); }
+  .field.has-error .field-error { display: block; }
+
+  details.more summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--brand-01); list-style: none; display: flex; align-items: center; gap: 6px; }
+  details.more summary::-webkit-details-marker { display: none; }
+  details.more summary::before { content: '+'; display: inline-flex; width: 18px; height: 18px; align-items: center; justify-content: center; border: 1px solid var(--brand-01); border-radius: 2px; font-size: 14px; line-height: 1; }
+  details.more[open] summary::before { content: '−'; }
+  details.more summary small { font-weight: 400; color: var(--dark-1); }
+  .tag-filled { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--brand-01); background: #FBE7EC; padding: 2px 8px; border-radius: 2px; }
+  .tag-filled[hidden] { display: none; }
+  details.more summary { flex-wrap: wrap; }
+  details.more .more-body { margin-top: 16px; }
+
+  .check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.45; cursor: pointer; }
+  .check input { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--brand-01); flex-shrink: 0; }
+  .check small { display: block; font-size: 12px; color: var(--dark-1); }
+
+  /* Resultado */
+  .result { position: sticky; top: 80px; }
+  .result-empty { padding: 32px 24px; text-align: center; color: var(--dark-1); font-size: 14px; line-height: 1.5; }
+  .hero { padding: 24px; border-bottom: 1px solid var(--light-3); border-left: 4px solid var(--brand-01); }
+  .hero-label { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--dark-1); }
+  .hero-value { font-size: 36px; font-weight: 700; color: var(--brand-01); font-variant-numeric: tabular-nums; line-height: 1.15; margin: 4px 0 8px; }
+  .hero-sub { font-size: 14px; color: var(--dark-2); line-height: 1.5; }
+  .hero-sub strong { color: var(--dark-3); }
+  .mini { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid var(--light-3); }
+  .mini div { padding: 14px 16px; border-right: 1px solid var(--light-3); min-width: 0; }
+  .mini div:last-child { border-right: none; }
+  .mini p { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--dark-1); margin-bottom: 4px; }
+  .mini strong { font-size: 16px; font-variant-numeric: tabular-nums; }
+
+  .breakdown { padding: 16px 24px 8px; }
+  .breakdown h3 { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark-1); margin-bottom: 8px; }
+  .line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 9px 0; border-top: 1px solid var(--light-3); font-size: 14px; }
+  .line:first-of-type { border-top: none; }
+  .line small { display: block; font-size: 12px; color: var(--dark-1); margin-top: 2px; line-height: 1.4; }
+  .line .v { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .line .v small { text-align: right; }
+  .line.total { border-top: 2px solid var(--dark-3); font-weight: 700; font-size: 15px; }
+  .line.zero { color: var(--dark-1); }
+  .notes { padding: 8px 24px 16px; }
+  .notes p { font-size: 12px; color: var(--dark-2); line-height: 1.55; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid var(--mid-grey); }
+  .actions { padding: 0 24px 24px; }
+  .btn-secondary { font-family: var(--font); font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--brand-01); background: var(--white); border: 1px solid var(--brand-01); height: 44px; width: 100%; cursor: pointer; border-radius: var(--radius-sm); }
+  .btn-secondary:hover { background: #FBE7EC; }
+
+  .foot-note { font-size: 11px; color: var(--dark-1); line-height: 1.6; margin-top: 32px; }
+  .print-only { display: none; }
+
+  @media (max-width: 1055px) {
+    .layout { grid-template-columns: 1fr; }
+    .result { position: static; }
+  }
+  @media (max-width: 671px) {
+    .header { padding: 0 var(--grid-margin-sm); }
+    .header-logo img { height: 32px; }
+    .page { padding: 24px var(--grid-margin-sm) 64px; }
+    .page-title { font-size: 22px; }
+    .card-section, .hero { padding: 16px; }
+    .breakdown { padding: 12px 16px 4px; } .notes { padding: 8px 16px 12px; } .actions { padding: 0 16px 16px; }
+    .form-row { grid-template-columns: 1fr; }
+    .hero-value { font-size: 30px; }
+    .mini { grid-template-columns: 1fr; }
+    .mini div { border-right: none; border-bottom: 1px solid var(--light-3); display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .mini div:last-child { border-bottom: none; }
+    .mini p { margin: 0; }
+  }
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    body { background: #fff; }
+    .header { position: static; box-shadow: none; }
+    .page { padding: 16px 0; max-width: none; }
+    .layout { display: block; }
+    #form, .actions, .result-empty { display: none !important; }
+    .card { box-shadow: none; }
+    .result { position: static; }
+    .print-only { display: block; }
+    .line, .hero, .mini { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<header class="header" role="banner">
+  <a class="header-logo" href="#" aria-label="JBC Assessoria Contábil"><img src="__LOGO__" alt="JBC Assessoria Contábil"></a>
+</header>
+
+<main class="page">
+  <div class="page-header">
+    <p class="page-eyebrow">Simulador para empresas do Simples Nacional</p>
+    <h1 class="page-title"><strong>Quanto custa</strong> contratar um funcionário?</h1>
+    <p class="page-desc">Informe o salário e veja quanto a empresa gasta de verdade por mês e por ano, já com 13º, férias, FGTS e benefícios.</p>
+  </div>
+
+  <div class="layout">
+    <form class="card" id="form" novalidate autocomplete="off">
+      <div class="card-section">
+        <p class="step"><b>1</b>Salário</p>
+        <div class="form-row">
+          <div class="field" id="f-salario">
+            <label for="salario">Salário mensal em carteira</label>
+            <div class="prefix"><input id="salario" type="text" inputmode="decimal" placeholder="0,00" aria-describedby="salario-help salario-err"></div>
+            <span class="field-helper" id="salario-help">Valor bruto, antes dos descontos do funcionário.</span>
+            <span class="field-error" id="salario-err">Informe o salário para ver o custo.</span>
+          </div>
+          <div class="field">
+            <label for="contrato">Tipo de contratação</label>
+            <select id="contrato">
+              <option value="clt" selected>Funcionário (CLT)</option>
+              <option value="aprendiz">Jovem aprendiz</option>
+            </select>
+            <span class="field-helper" id="contrato-help">Contrato de trabalho comum.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-section">
+        <p class="step"><b>2</b>Atividade da empresa</p>
+        <div class="form-row full">
+          <div class="field">
+            <label for="atividade">O que a empresa faz?</label>
+            <select id="atividade" aria-describedby="atividade-help">
+              <option value="geral" selected>Comércio, indústria ou outros serviços</option>
+              <option value="construcao">Construção civil ou obras de engenharia</option>
+              <option value="paisagismo">Paisagismo ou decoração de interiores</option>
+              <option value="vigilancia">Vigilância ou segurança</option>
+              <option value="limpeza">Limpeza ou conservação</option>
+              <option value="advocacia">Advocacia</option>
+            </select>
+            <span class="field-helper" id="atividade-help"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-section">
+        <p class="step"><b>3</b>Benefícios <span>valores por mês, se houver</span></p>
+        <div class="form-row">
+          <div class="field">
+            <label for="vt">Vale-transporte</label>
+            <div class="prefix"><input id="vt" type="text" inputmode="decimal" placeholder="0,00"></div>
+            <span class="field-helper" id="vt-help">Custo das passagens no mês.</span>
+          </div>
+          <div class="field">
+            <label for="vr">Vale-refeição ou alimentação</label>
+            <div class="prefix"><input id="vr" type="text" inputmode="decimal" placeholder="0,00"></div>
+            <span class="field-helper">Valor total do benefício no mês.</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="vr-desc">Desconta parte do funcionário?</label>
+            <select id="vr-desc">
+              <option value="nao" selected>Não desconta</option>
+              <option value="sim">Sim, desconta</option>
+            </select>
+            <span class="field-helper">Algumas convenções coletivas proíbem o desconto. Na dúvida, deixe "Não desconta".</span>
+          </div>
+          <div class="field" id="f-vr-pct" hidden>
+            <label for="vr-pct">Percentual descontado</label>
+            <input id="vr-pct" type="text" inputmode="decimal" value="20" aria-describedby="vr-pct-help vr-pct-err">
+            <span class="field-helper" id="vr-pct-help">Até 20% do valor do benefício (limite do PAT).</span>
+            <span class="field-error" id="vr-pct-err">Informe um percentual entre 0 e 20.</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="saude">Plano de saúde ou odontológico</label>
+            <div class="prefix"><input id="saude" type="text" inputmode="decimal" placeholder="0,00"></div>
+            <span class="field-helper">Parte paga pela empresa.</span>
+          </div>
+          <div class="field">
+            <label for="outros">Outros benefícios</label>
+            <div class="prefix"><input id="outros" type="text" inputmode="decimal" placeholder="0,00"></div>
+            <span class="field-helper">Seguro de vida, auxílio-creche etc.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-section">
+        <details class="more" id="mais">
+          <summary>Adicionais e jornada <small id="mais-hint">insalubridade, periculosidade, horas extras</small><span class="tag-filled" id="mais-filled" hidden>Preenchido</span></summary>
+          <div class="more-body">
+            <div class="form-row full">
+              <div class="field">
+                <label for="risco">Adicional de insalubridade ou periculosidade</label>
+                <select id="risco">
+                  <option value="0" selected>Não tem</option>
+                  <option value="ins10">Insalubridade grau mínimo (10% do salário mínimo)</option>
+                  <option value="ins20">Insalubridade grau médio (20% do salário mínimo)</option>
+                  <option value="ins40">Insalubridade grau máximo (40% do salário mínimo)</option>
+                  <option value="peric">Periculosidade (30% do salário)</option>
+                </select>
+                <span class="field-helper">Os dois não se somam: o funcionário recebe um ou outro.</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="he">Horas extras ou comissões</label>
+                <div class="prefix"><input id="he" type="text" inputmode="decimal" placeholder="0,00"></div>
+                <span class="field-helper">Média por mês, se forem frequentes.</span>
+              </div>
+              <div class="field" id="f-jornada">
+                <label for="jornada">Horas de trabalho por semana</label>
+                <input id="jornada" type="text" inputmode="numeric" value="44" aria-describedby="jornada-help jornada-err">
+                <span class="field-helper" id="jornada-help">Jornada completa: 44 horas. Meio período: 20 a 30 horas.</span>
+                <span class="field-error" id="jornada-err">Informe as horas por semana, entre 1 e 44.</span>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="card-section">
+        <label class="check"><input type="checkbox" id="multa">
+          <span>Incluir reserva para uma possível demissão<small>Separa por mês a multa de 40% do FGTS paga na demissão sem justa causa.</small></span>
+        </label>
+      </div>
+    </form>
+
+    <section class="card result" aria-live="polite">
+      <div class="result-empty" id="vazio">Informe o salário para ver quanto o funcionário custa para a empresa.</div>
+      <div id="resultado" hidden>
+        <div class="print-only breakdown" id="premissas"></div>
+        <div class="hero">
+          <p class="hero-label">Custo por mês</p>
+          <p class="hero-value" id="k-mensal">—</p>
+          <p class="hero-sub" id="k-mult"></p>
+        </div>
+        <div class="mini">
+          <div><p>Por ano</p><strong id="k-anual">—</strong></div>
+          <div><p>Por mês trabalhado</p><strong id="k-trab">—</strong></div>
+          <div><p>Por hora</p><strong id="k-hora">—</strong></div>
+        </div>
+        <div class="breakdown">
+          <h3>Para onde vai o dinheiro, por mês</h3>
+          <div id="linhas"></div>
+        </div>
+        <div class="notes" id="notas"></div>
+        <div class="actions"><button type="button" class="btn-secondary" id="btn-print">Imprimir ou salvar em PDF</button></div>
+      </div>
+    </section>
+  </div>
+
+  <p class="foot-note">Estimativa para empresas optantes pelo Simples Nacional, com as regras de 2026: salário mínimo de R$ 1.621,00; FGTS de 8% (2% para jovem aprendiz) sobre salários, 13º e férias; contribuição patronal incluída no DAS, exceto nas atividades do Anexo IV (LC 123/2006, art. 18, § 5º-C), que recolhem 20% de INSS patronal e o RAT da atividade sobre a folha. Não considera convenção coletiva da categoria, reajustes durante o ano nem verbas de rescisão além da reserva indicada. Simulação elaborada pela JBC Assessoria Contábil. Para decidir uma contratação, confirme os valores com a sua contadora.</p>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const SALARIO_MINIMO = 1621.00;
+  // Anexo IV (LC 123/2006, art. 18, § 5º-C): INSS patronal 20% + RAT por atividade, FAP 1,0
+  const ATIVIDADES = {
+    geral:      { anexo4: false, rat: 0,    nome: 'Comércio, indústria ou outros serviços' },
+    construcao: { anexo4: true,  rat: 0.03, nome: 'Construção civil ou obras de engenharia' },
+    paisagismo: { anexo4: true,  rat: 0.03, nome: 'Paisagismo ou decoração de interiores' },
+    vigilancia: { anexo4: true,  rat: 0.03, nome: 'Vigilância ou segurança' },
+    limpeza:    { anexo4: true,  rat: 0.03, nome: 'Limpeza ou conservação' },
+    advocacia:  { anexo4: true,  rat: 0.01, nome: 'Advocacia' }
+  };
+  const RISCO = {
+    '0': { nome: '', calc: () => 0 },
+    ins10: { nome: 'Insalubridade grau mínimo', calc: () => 0.10 * SALARIO_MINIMO },
+    ins20: { nome: 'Insalubridade grau médio', calc: () => 0.20 * SALARIO_MINIMO },
+    ins40: { nome: 'Insalubridade grau máximo', calc: () => 0.40 * SALARIO_MINIMO },
+    peric: { nome: 'Periculosidade', calc: (s) => 0.30 * s }
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const num2 = (v) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function parseNum(str) {
+    // Aceita formatos brasileiros e alguns internacionais:
+    // "3000", "3.000", "3.000,00", "3000,5", "3000.50", "R$ 3.000,00", "3,000.00".
+    let s = String(str == null ? '' : str).trim().replace(/[R$\s]/g, '');
+    if (!s || !/^-?[\d.,]+$/.test(s)) return NaN;
+    const lc = s.lastIndexOf(','), ld = s.lastIndexOf('.');
+    if (lc > -1 && ld > -1) {
+      // Os dois separadores: o último é o decimal.
+      s = lc > ld ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+    } else if (lc > -1) {
+      s = (s.match(/,/g).length > 1) ? s.replace(/,/g, '') : s.replace(',', '.');
+    } else if (ld > -1) {
+      // Só ponto: é milhar se houver mais de um ou se vier seguido de exatamente 3 dígitos ("3.000").
+      if (s.match(/\./g).length > 1 || /^-?\d{1,3}\.\d{3}$/.test(s)) s = s.replace(/\./g, '');
+    }
+    const n = Number(s);
+    return Number.isFinite(n) ? n : NaN;
+  }
+  const money = (id) => { const n = parseNum($(id).value); return n > 0 ? n : 0; };
+
+  function read() {
+    return {
+      salario: parseNum($('salario').value),
+      contrato: $('contrato').value,
+      atividade: $('atividade').value,
+      risco: $('risco').value,
+      he: money('he'),
+      jornada: parseNum($('jornada').value),
+      vrDesc: $('vr-desc').value === 'sim' ? parseNum($('vr-pct').value) / 100 : 0,
+      vt: money('vt'), vr: money('vr'), saude: money('saude'), outros: money('outros'),
+      multa: $('multa').checked
+    };
+  }
+
+  function calc(i) {
+    const at = ATIVIDADES[i.atividade];
+    const adicRisco = RISCO[i.risco].calc(i.salario);
+    const R = i.salario + adicRisco + i.he;            // remuneração mensal
+    const salarios = 12 * R;                           // 12 meses, um deles de férias
+    const decimo = R;
+    const terco = R / 3;
+    const base = salarios + decimo + terco;
+    const fgtsAliq = i.contrato === 'aprendiz' ? 0.02 : 0.08;
+    const fgts = fgtsAliq * base;
+    const inss = at.anexo4 ? 0.20 * base : 0;
+    const rat = at.anexo4 ? at.rat * base : 0;
+    const vtEmpresa = Math.max(0, i.vt - 0.06 * i.salario);
+    const vrEmpresa = i.vr * (1 - (i.vrDesc > 0 ? i.vrDesc : 0));
+    const beneficios = 11 * vtEmpresa + 11 * vrEmpresa + 12 * i.saude + 12 * i.outros;
+    const multa = i.multa ? 0.40 * fgts : 0;
+    const total = salarios + decimo + terco + fgts + inss + rat + beneficios + multa;
+    const horasMes = (i.jornada > 0 ? i.jornada : 44) * 5;   // CLT: 44 h/semana = 220 h/mês
+    return {
+      at, adicRisco, R, salarios, decimo, terco, fgtsAliq, fgts, inss, rat, vtEmpresa, vrEmpresa, beneficios, multa, total,
+      mensal: total / 12, anual: total, porMesTrab: total / 11, porHora: total / (11 * horasMes), horasMes,
+      mult: (total / 12) / i.salario
+    };
+  }
+
+  function lines(i, r) {
+    const L = [];
+    const m = (v) => v / 12;
+    L.push(['Salário', i.salario, '']);
+    if (r.adicRisco > 0) L.push([RISCO[i.risco].nome, r.adicRisco, '']);
+    if (i.he > 0) L.push(['Horas extras ou comissões', i.he, '']);
+    L.push(['13º salário', m(r.decimo), 'Pago no fim do ano; aqui, dividido por 12']);
+    L.push(['1/3 de férias', m(r.terco), 'Pago nas férias; aqui, dividido por 12']);
+    L.push(['FGTS', m(r.fgts), (r.fgtsAliq * 100) + '% sobre salário, 13º e férias, depositado na conta do funcionário']);
+    if (r.at.anexo4) {
+      L.push(['INSS da empresa', m(r.inss), '20% sobre a folha. Sua atividade paga fora do DAS']);
+      L.push(['Seguro de acidente de trabalho (RAT)', m(r.rat), (r.at.rat * 100) + '% sobre a folha, conforme a atividade']);
+    } else {
+      L.push(['INSS da empresa', 0, 'Já incluído no DAS do Simples, não pesa na folha', true]);
+    }
+    if (i.vt > 0) L.push(['Vale-transporte', 11 * r.vtEmpresa / 12, r.vtEmpresa === 0 ? 'O desconto de 6% do funcionário cobre todo o custo' : 'Já descontados os 6% do funcionário']);
+    if (i.vr > 0) L.push(['Vale-refeição ou alimentação', 11 * r.vrEmpresa / 12, (i.vrDesc > 0 ? 'Já descontados os ' + (i.vrDesc * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + '% do funcionário. ' : 'Sem desconto do funcionário. ') + 'Sem pagamento no mês de férias']);
+    if (i.saude > 0) L.push(['Plano de saúde ou odontológico', i.saude, '']);
+    if (i.outros > 0) L.push(['Outros benefícios', i.outros, '']);
+    if (i.multa) L.push(['Reserva para demissão', m(r.multa), '40% do FGTS, separado por mês']);
+    return L;
+  }
+
+  function notes(i, r) {
+    const n = [];
+    n.push('O custo por mês é uma média do ano. Na prática, o gasto é menor nos meses comuns e maior no fim do ano (13º) e no mês das férias.');
+    n.push('Por mês trabalhado: o funcionário trabalha 11 meses e tira 1 de férias. Use esse valor se for calcular quanto cobrar pelo trabalho dele.');
+    if (!r.at.anexo4) n.push('No Simples, o INSS da empresa sobre os salários já está dentro do DAS, pago sobre o faturamento. Por isso o custo é menor do que em outros regimes.');
+    if (i.contrato === 'aprendiz') n.push('Jovem aprendiz: FGTS de 2%. O salário não pode ser menor que o salário mínimo por hora, proporcional à jornada contratada.');
+    return n;
+  }
+
+  let touched = false, last = null;
+
+  function render() {
+    const i = read();
+    const at = ATIVIDADES[i.atividade];
+    $('atividade-help').textContent = at.anexo4
+      ? 'Essa atividade paga INSS da empresa (20%) e seguro de acidente sobre os salários, fora do DAS.'
+      : 'O INSS da empresa já está no DAS. Sobre os salários, a empresa paga o FGTS.';
+    $('contrato-help').textContent = i.contrato === 'aprendiz' ? 'FGTS de 2% em vez de 8%.' : 'Contrato de trabalho comum.';
+
+    const salOk = i.salario > 0;
+    $('f-salario').classList.toggle('has-error', !salOk && touched);
+    const help = $('salario-help');
+    const semOk = Number.isFinite(i.jornada) && i.jornada > 0 && i.jornada <= 44;
+    const piso = SALARIO_MINIMO * Math.min(1, (semOk ? i.jornada : 44) / 44);
+    if (salOk && i.salario + 0.005 < piso) {
+      const cheio = !semOk || i.jornada >= 44;
+      help.textContent = i.contrato === 'aprendiz'
+        ? 'Abaixo do mínimo do aprendiz: salário mínimo por hora, ' + fmt(piso) + ' para ' + (semOk ? i.jornada : 44) + ' horas por semana.'
+        : (cheio ? 'Abaixo do salário mínimo (' + fmt(SALARIO_MINIMO) + '). Se a jornada for menor, ajuste as horas em "Adicionais e jornada".'
+                 : 'Abaixo do mínimo proporcional à jornada de ' + i.jornada + ' horas por semana (' + fmt(piso) + ').');
+      help.classList.add('warn');
+    } else { help.textContent = 'Valor bruto, antes dos descontos do funcionário.'; help.classList.remove('warn'); }
+
+    const filled = i.risco !== '0' || i.he > 0 || (semOk && i.jornada !== 44);
+    $('mais-filled').hidden = !filled;
+
+    const jorOk = Number.isFinite(i.jornada) && i.jornada > 0 && i.jornada <= 44;
+    $('f-jornada').classList.toggle('has-error', !jorOk);
+    $('vt-help').textContent = 'Custo das passagens no mês. A empresa desconta até 6% do salário' + (salOk ? ' (' + fmt(0.06 * i.salario) + ').' : '.');
+
+    const descOn = $('vr-desc').value === 'sim';
+    $('f-vr-pct').hidden = !descOn;
+    const pctN = parseNum($('vr-pct').value);
+    const pctOk = !descOn || (Number.isFinite(pctN) && pctN >= 0 && pctN <= 20);
+    $('f-vr-pct').classList.toggle('has-error', !pctOk);
+    if (descOn && pctOk && i.vr > 0) $('vr-pct-help').textContent = 'Até 20% do valor do benefício (limite do PAT). Desconto de ' + fmt(i.vr * pctN / 100) + ' por mês.';
+    else $('vr-pct-help').textContent = 'Até 20% do valor do benefício (limite do PAT).';
+
+    if (!salOk || !jorOk || !pctOk) { $('resultado').hidden = true; $('vazio').hidden = false; last = null; return; }
+    const r = calc(i);
+    last = { i, r };
+    $('vazio').hidden = true; $('resultado').hidden = false;
+
+    $('k-mensal').textContent = fmt(r.mensal);
+    $('k-mult').innerHTML = 'Cada <strong>R$ 100</strong> de salário custam <strong>' + fmt(100 * r.mult) + '</strong> por mês para a empresa.';
+    $('k-anual').textContent = fmt(r.anual);
+    $('k-trab').textContent = fmt(r.porMesTrab);
+    $('k-hora').textContent = fmt(r.porHora);
+
+    $('linhas').innerHTML = lines(i, r).map(([n, v, d, z]) =>
+      `<div class="line${z ? ' zero' : ''}"><span>${n}${d ? `<small>${d}</small>` : ''}</span><span class="v">${fmt(v)}</span></div>`
+    ).join('') + `<div class="line total"><span>Total por mês</span><span class="v">${fmt(r.mensal)}</span></div>`;
+
+    $('notas').innerHTML = notes(i, r).map(t => `<p>${t}</p>`).join('');
+
+    const prem = [['Salário', fmt(i.salario)], ['Contratação', i.contrato === 'aprendiz' ? 'Jovem aprendiz' : 'Funcionário (CLT)'], ['Atividade', at.nome]];
+    if (r.adicRisco > 0) prem.push([RISCO[i.risco].nome, fmt(r.adicRisco)]);
+    if (i.he > 0) prem.push(['Horas extras ou comissões', fmt(i.he)]);
+    prem.push(['Jornada', i.jornada.toLocaleString('pt-BR') + ' horas por semana']);
+    if (i.vt > 0) prem.push(['Vale-transporte (passagens)', fmt(i.vt)]);
+    if (i.vr > 0) prem.push(['Vale-refeição ou alimentação', fmt(i.vr) + (i.vrDesc > 0 ? ', com desconto de ' + (i.vrDesc * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + '% do funcionário' : ', sem desconto do funcionário')]);
+    if (i.saude > 0) prem.push(['Plano de saúde ou odontológico', fmt(i.saude)]);
+    if (i.outros > 0) prem.push(['Outros benefícios', fmt(i.outros)]);
+    prem.push(['Reserva para demissão', i.multa ? 'Incluída' : 'Não incluída']);
+    $('premissas').innerHTML = '<h3>Dados da simulação</h3>' + prem.map(p => `<div class="line"><span>${p[0]}</span><span class="v">${p[1]}</span></div>`).join('') +
+      `<div class="line"><span>Data</span><span class="v">${new Date().toLocaleDateString('pt-BR')}</span></div>`;
+  }
+
+  const form = $('form');
+  form.addEventListener('input', (e) => { if (e.target.id === 'salario') touched = true; render(); });
+  form.addEventListener('change', render);
+  form.addEventListener('submit', (e) => e.preventDefault());
+  form.querySelectorAll('.prefix input').forEach(el => el.addEventListener('blur', () => {
+    const n = parseNum(el.value); if (n > 0) el.value = num2(n);
+    if (el.id === 'salario') { touched = true; render(); }
+  }));
+  $('btn-print').addEventListener('click', async () => {
+    try { await document.fonts.ready; await Promise.all([document.fonts.load('400 14px Lato'), document.fonts.load('700 14px Lato')]); } catch (e) {}
+    window.print();
+  });
+
+  window.__calc = calc;
+  render();
+})();
+</script>
+</body>
+</html>
